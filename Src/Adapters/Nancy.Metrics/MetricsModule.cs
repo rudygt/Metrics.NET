@@ -52,13 +52,13 @@ namespace Nancy.Metrics
                 Config.ModuleConfigAction(this);
             }
 
-            object[] noCacheHeaders = { 
+            object[] noCacheHeaders = {
                 new { Header = "Cache-Control", Value = "no-cache, no-store, must-revalidate" },
                 new { Header = "Pragma", Value = "no-cache" },
                 new { Header = "Expires", Value = "0" }
             };
 
-            Get["/"] = _ =>
+            Get("/", _ =>
             {
                 if (!this.Request.Url.Path.EndsWith("/"))
                 {
@@ -71,22 +71,22 @@ namespace Nancy.Metrics
                     response.WithHeader("Content-Encoding", "gzip");
                 }
                 return response;
-            };
+            });
 
-            Get["/text"] = _ => Response.AsText(StringReport.RenderMetrics(Config.DataProvider.CurrentMetricsData, Config.HealthStatus))
-                .WithHeaders(noCacheHeaders);
+            Get("/text", _ => Response.AsText(StringReport.RenderMetrics(Config.DataProvider.CurrentMetricsData, Config.HealthStatus))
+               .WithHeaders(noCacheHeaders));
 
-            Get["/json"] = _ => Response.AsText(JsonBuilderV1.BuildJson(Config.DataProvider.CurrentMetricsData), "text/json")
-                .WithHeaders(noCacheHeaders);
+            Get("/json", _ => Response.AsText(JsonBuilderV1.BuildJson(Config.DataProvider.CurrentMetricsData), "text/json")
+               .WithHeaders(noCacheHeaders));
 
-            Get["/v2/json"] = _ => Response.AsText(JsonBuilderV2.BuildJson(Config.DataProvider.CurrentMetricsData), "text/json")
-                .WithHeaders(noCacheHeaders);
+            Get("/v2/json", _ => Response.AsText(JsonBuilderV2.BuildJson(Config.DataProvider.CurrentMetricsData), "text/json")
+               .WithHeaders(noCacheHeaders));
 
-            Get["/ping"] = _ => Response.AsText("pong", "text/plain")
-                .WithHeaders(noCacheHeaders);
+            Get("/ping", _ => Response.AsText("pong", "text/plain")
+               .WithHeaders(noCacheHeaders));
 
-            Get["/health"] = _ => GetHealthStatus()
-                .WithHeaders(noCacheHeaders);
+            Get("/health", _ => GetHealthStatus()
+               .WithHeaders(noCacheHeaders));
         }
 
         private bool AcceptsGzip()
