@@ -132,7 +132,7 @@ namespace HdrHistogram
         {
             if (!Monitor.IsEntered(readerLockObject))
             {
-                throw new ThreadStateException("flipPhase() can only be called while holding the readerLock()");
+                throw new Exception("flipPhase() can only be called while holding the readerLock()");
             }
 
             var nextPhaseIsEven = (startEpoch.GetValue() < 0); // Current phase is odd...
@@ -169,7 +169,8 @@ namespace HdrHistogram
                 {
                     if (yieldTimeNsec == 0)
                     {
-                        Thread.Yield();
+                        //Thread.Yield();
+                        Thread.Sleep(0);
                     }
                     else
                     {

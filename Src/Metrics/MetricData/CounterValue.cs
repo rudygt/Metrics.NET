@@ -1,4 +1,3 @@
-﻿
 using System;
 using System.Collections.Generic;
 
@@ -15,43 +14,44 @@ namespace Metrics.MetricData
         });
 
 
-
         public struct SetItem
         {
             /// <summary>
-            /// Registered item name.
+            ///     Registered item name.
             /// </summary>
             public readonly string Item;
 
             /// <summary>
-            /// Specific count for this item.
+            ///     Specific count for this item.
             /// </summary>
             public readonly long Count;
 
             /// <summary>
-            /// Percent of this item from the total count.
+            ///     Percent of this item from the total count.
             /// </summary>
             public readonly double Percent;
 
             public SetItem(string item, long count, double percent)
             {
-                this.Item = item;
-                this.Count = count;
-                this.Percent = percent;
+                Item = item;
+                Count = count;
+                Percent = percent;
             }
         }
 
         /// <summary>
-        /// Total count of the counter instance.
+        ///     Total count of the counter instance.
         /// </summary>
         public readonly long Count;
 
         /// <summary>
-        /// Separate counters for each registered set item.
+        ///     Separate counters for each registered set item.
         /// </summary>
         public readonly SetItem[] Items;
 
-        internal CounterValue(long count) : this(count, noItems) { }
+        internal CounterValue(long count) : this(count, noItems)
+        {
+        }
 
         public CounterValue(long count, SetItem[] items)
         {
@@ -60,18 +60,8 @@ namespace Metrics.MetricData
                 throw new ArgumentNullException(nameof(items));
             }
 
-            this.Count = count;
-            this.Items = items;
+            Count = count;
+            Items = items;
         }
-    }
-
-    /// <summary>
-    /// Combines the value for a counter with the defined unit for the value.
-    /// </summary>
-    public sealed class CounterValueSource : MetricValueSource<CounterValue>
-    {
-        public CounterValueSource(string name, MetricValueProvider<CounterValue> value, Unit unit, MetricTags tags)
-            : base(name, value, unit, tags)
-        { }
     }
 }

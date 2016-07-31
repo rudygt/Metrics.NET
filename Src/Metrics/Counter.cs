@@ -1,10 +1,10 @@
-﻿namespace Metrics
+namespace Metrics
 {
     /// <summary>
     /// A counter is a simple incrementing and decrementing 64-bit integer.
     /// Each operation can also be applied to a item from a set and the counter will store individual count for each set item.
     /// </summary>
-    public interface Counter : ResetableMetric
+    public interface Counter : IResetableMetric
     {
         /// <summary>
         /// Increment the counter value.

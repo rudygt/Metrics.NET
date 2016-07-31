@@ -1,40 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Metrics.Utils;
 
 namespace Metrics
 {
     /// <summary>
-    /// Collection of tags that can be attached to a metric.
+    ///     Collection of tags that can be attached to a metric.
     /// </summary>
-    public struct MetricTags : Utils.IHideObjectMembers
+    public struct MetricTags : IHideObjectMembers
     {
-        private static readonly string[] empty = new string[0];
+        private static readonly string[] Empty = new string[0];
 
         public static readonly MetricTags None = new MetricTags(Enumerable.Empty<string>());
 
-        private readonly string[] tags;
+        private readonly string[] _tags;
 
         public MetricTags(params string[] tags)
         {
-            this.tags = tags.ToArray();
+            _tags = tags.ToArray();
         }
 
         public MetricTags(IEnumerable<string> tags)
             : this(tags.ToArray())
-        { }
+        {
+        }
 
         public MetricTags(string commaSeparatedTags)
             : this(ToTags(commaSeparatedTags))
-        { }
-
-        public string[] Tags
         {
-            get
-            {
-                return tags ?? empty;
-            }
         }
+
+        public string[] Tags => _tags ?? Empty;
 
         private static IEnumerable<string> ToTags(string commaSeparatedTags)
         {
@@ -43,7 +40,7 @@ namespace Metrics
                 return Enumerable.Empty<string>();
             }
 
-            return commaSeparatedTags.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            return commaSeparatedTags.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
                 .Select(t => t.Trim().ToLowerInvariant());
         }
 

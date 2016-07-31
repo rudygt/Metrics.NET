@@ -1,32 +1,32 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text;
 
 namespace Metrics
 {
     /// <summary>
-    /// Result of a health check
+    ///     Result of a health check
     /// </summary>
     public struct HealthCheckResult
     {
         /// <summary>
-        /// True if the check was successful, false if the check failed.
+        ///     True if the check was successful, false if the check failed.
         /// </summary>
         public readonly bool IsHealthy;
 
         /// <summary>
-        /// Status message of the check. A status can be provided for both healthy and unhealthy states.
+        ///     Status message of the check. A status can be provided for both healthy and unhealthy states.
         /// </summary>
         public readonly string Message;
 
         private HealthCheckResult(bool isHealthy, string message)
         {
-            this.IsHealthy = isHealthy;
-            this.Message = message;
+            IsHealthy = isHealthy;
+            Message = message;
         }
 
         /// <summary>
-        /// Create a healthy status response.
+        ///     Create a healthy status response.
         /// </summary>
         /// <returns>Healthy status response.</returns>
         public static HealthCheckResult Healthy()
@@ -35,7 +35,7 @@ namespace Metrics
         }
 
         /// <summary>
-        /// Create a healthy status response.
+        ///     Create a healthy status response.
         /// </summary>
         /// <param name="message">Status message.</param>
         /// <param name="values">Values to format the status message with.</param>
@@ -47,7 +47,7 @@ namespace Metrics
         }
 
         /// <summary>
-        /// Create a unhealthy status response.
+        ///     Create a unhealthy status response.
         /// </summary>
         /// <returns>Unhealthy status response.</returns>
         public static HealthCheckResult Unhealthy()
@@ -56,7 +56,7 @@ namespace Metrics
         }
 
         /// <summary>
-        /// Create a unhealthy status response.
+        ///     Create a unhealthy status response.
         /// </summary>
         /// <param name="message">Status message.</param>
         /// <param name="values">Values to format the status message with.</param>
@@ -68,7 +68,7 @@ namespace Metrics
         }
 
         /// <summary>
-        /// Create a unhealthy status response.
+        ///     Create a unhealthy status response.
         /// </summary>
         /// <param name="exception">Exception to use for reason.</param>
         /// <returns>Unhealthy status response.</returns>
@@ -80,10 +80,10 @@ namespace Metrics
 
         private static string FormatStackTrace(Exception exception, int indent = 2)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             var aggregate = exception as AggregateException;
-            var pad = new string(' ', indent * 2);
+            var pad = new string(' ', indent*2);
             if (aggregate != null)
             {
                 builder.AppendFormat("{0}{1}: {2}" + Environment.NewLine, pad, exception.GetType().Name, exception.Message);

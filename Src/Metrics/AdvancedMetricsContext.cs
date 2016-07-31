@@ -1,10 +1,12 @@
-﻿using System;
+using System;
+using System.Threading;
 using Metrics.Core;
 using Metrics.MetricData;
 using Metrics.Sampling;
 
 namespace Metrics
-{
+{ 
+
     public interface AdvancedMetricsContext : Utils.IHideObjectMembers
     {
         /// <summary>

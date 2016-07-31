@@ -1,28 +1,25 @@
-﻿
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Metrics.Logging;
+
 namespace Metrics
 {
     public class MetricsErrorHandler
     {
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
-        private static readonly Meter errorMeter = Metric.Internal.Meter("Metrics Errors", Unit.Errors);
+        private static readonly ILog log = LogProvider.GetLogger(typeof(MetricsErrorHandler));
 
-        private readonly ConcurrentBag<Action<Exception, string>> handlers = new ConcurrentBag<Action<Exception, string>>();
+        private static readonly Meter ErrorMeter = null;//TODO: initialize withthis -> Metric.Internal.Meter("Metrics Errors", Unit.Errors);
 
-        private static readonly bool isMono = Type.GetType("Mono.Runtime") != null;
+        private static readonly bool IsMono = Type.GetType("Mono.Runtime") != null;
+
+        private readonly ConcurrentBag<Action<Exception, string>> _handlers = new ConcurrentBag<Action<Exception, string>>();
 
         private MetricsErrorHandler()
         {
-            this.AddHandler((x, msg) => log.ErrorException("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", x, msg, x.Message));
-            this.AddHandler((x, msg) => Trace.TraceError("Metrics: Unhandled exception in Metrics.NET Library " + x.ToString()));
-
-            if (Environment.UserInteractive || isMono)
-            {
-                this.AddHandler((x, msg) => Console.WriteLine("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", msg, x.ToString()));
-            }
+            AddHandler((x, msg) => log.ErrorException("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", x, msg, x.Message));
+            AddHandler((x, msg) => Trace.TraceError("Metrics: Unhandled exception in Metrics.NET Library " + x.ToString()));
+            AddHandler((x, msg) => Console.WriteLine("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", msg, x.ToString()));
         }
 
         internal static MetricsErrorHandler Handler { get; } = new MetricsErrorHandler();
@@ -34,23 +31,23 @@ namespace Metrics
 
         internal void AddHandler(Action<Exception, string> handler)
         {
-            this.handlers.Add(handler);
+            _handlers.Add(handler);
         }
 
         internal void ClearHandlers()
         {
-            while (!this.handlers.IsEmpty)
+            while (!_handlers.IsEmpty)
             {
                 Action<Exception, string> item;
-                this.handlers.TryTake(out item);
+                _handlers.TryTake(out item);
             }
         }
 
         private void InternalHandle(Exception exception, string message)
         {
-            errorMeter.Mark();
+            ErrorMeter.Mark();
 
-            foreach (var handler in this.handlers)
+            foreach (var handler in _handlers)
             {
                 try
                 {
