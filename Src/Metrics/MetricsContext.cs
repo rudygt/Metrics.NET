@@ -1,7 +1,10 @@
 using System;
-using System.Threading;
 using Metrics.MetricData;
 using Metrics.Utils;
+
+namespace Metrics.Reports
+{
+}
 
 namespace Metrics
 {
@@ -55,7 +58,7 @@ namespace Metrics
         /// <param name="tags">Optional set of tags that can be associated with the metric.</param>
         void Gauge(string name, Func<double> valueProvider, Unit unit, MetricTags tags = default(MetricTags));
 
-        /// <summary>
+        /*/// <summary>
         ///     Register a performance counter as a Gauge metric.
         /// </summary>
         /// <param name="name">Name of this gauge metric. Must be unique across all gauges in this context.</param>
@@ -64,7 +67,7 @@ namespace Metrics
         /// <param name="counterInstance">Instance of the performance counter</param>
         /// <param name="unit">Description of want the value represents ( Unit.Requests , Unit.Items etc ) .</param>
         /// <param name="tags">Optional set of tags that can be associated with the metric.</param>
-        void PerformanceCounter(string name, string counterCategory, string counterName, string counterInstance, Unit unit, MetricTags tags = default(MetricTags));
+        void PerformanceCounter(string name, string counterCategory, string counterName, string counterInstance, Unit unit, MetricTags tags = default(MetricTags));*/
 
         /// <summary>
         ///     A counter is a simple incrementing and decrementing 64-bit integer. Ex number of active requests.
@@ -119,7 +122,7 @@ namespace Metrics
         /// <param name="durationUnit">Time unit for reporting durations. Defaults to Milliseconds. </param>
         /// <param name="tags">Optional set of tags that can be associated with the metric.</param>
         /// <returns>Reference to the metric</returns>
-        Timer Timer(string name,
+        ITimer Timer(string name,
             Unit unit,
             SamplingType samplingType = SamplingType.Default,
             TimeUnit rateUnit = TimeUnit.Seconds,

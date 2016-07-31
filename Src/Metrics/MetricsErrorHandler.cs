@@ -9,7 +9,7 @@ namespace Metrics
     {
         private static readonly ILog log = LogProvider.GetLogger(typeof(MetricsErrorHandler));
 
-        private static readonly Meter ErrorMeter = null;//TODO: initialize withthis -> Metric.Internal.Meter("Metrics Errors", Unit.Errors);
+        private static readonly Meter ErrorMeter = Metric.Internal.Meter("Metrics Errors", Unit.Errors);
 
         private static readonly bool IsMono = Type.GetType("Mono.Runtime") != null;
 
