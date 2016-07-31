@@ -1,4 +1,4 @@
-﻿using Metrics.Core;
+using Metrics.Core;
 
 namespace Metrics.MetricData
 {
@@ -39,7 +39,7 @@ namespace Metrics.MetricData
             return EmptyHistogram;
         }
 
-        public static TimerValue GetCurrentValue(Timer metric)
+        public static TimerValue GetCurrentValue(ITimer metric)
         {
             var implementation = metric as TimerImplementation;
             if (implementation != null)

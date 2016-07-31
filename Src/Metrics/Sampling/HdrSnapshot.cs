@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic;
 using HdrHistogram;
+using System.Linq;
 
 namespace Metrics.Sampling
 {
@@ -42,7 +42,7 @@ namespace Metrics.Sampling
         public double Percentile98 => this.histogram.getValueAtPercentile(98);
         public double Percentile99 => this.histogram.getValueAtPercentile(99);
         public double Percentile999 => this.histogram.getValueAtPercentile(99.9);
-        
+
         public int Size => this.histogram.getEstimatedFootprintInBytes();
     }
 }

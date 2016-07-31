@@ -1,0 +1,22 @@
+{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "Microsoft.CSharp": "4.0.1",
+    "Microsoft.Extensions.Configuration": "1.0.0",
+    "NETStandard.Library": "1.6.0",
+    "System.Diagnostics.Process": "4.1.0",
+    "System.Diagnostics.TraceSource": "4.0.0",
+    "System.Dynamic.Runtime": "4.0.11",
+    "System.Threading.Thread": "4.0.0"
+  },
+
+  "frameworks": {
+    "netstandard1.6": {
+      "buildOptions": {
+        "define": [ "LIBLOG_PORTABLE"]
+      },
+      "imports": "dnxcore50"
+    }
+  }
+}

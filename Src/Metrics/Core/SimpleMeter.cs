@@ -1,7 +1,7 @@
-﻿using Metrics.ConcurrencyUtilities;
+using System;
+using Metrics.ConcurrencyUtilities;
 using Metrics.MetricData;
 using Metrics.Utils;
-using System;
 
 namespace Metrics.Core
 {

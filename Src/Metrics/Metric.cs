@@ -1,10 +1,9 @@
-ï»¿using System;
-using System.Configuration;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Metrics.Logging;
 using Metrics.Utils;
+using System.Linq;
 
 namespace Metrics
 {
@@ -13,7 +12,7 @@ namespace Metrics
     /// </summary>
     public static class Metric
     {
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog log = LogProvider.GetLogger(typeof(Metric));
 
         private static readonly DefaultMetricsContext globalContext;
         private static readonly MetricsConfig config;
@@ -87,7 +86,7 @@ namespace Metrics
         /// </example>
         public static MetricsConfig Config { get { return config; } }
 
-        /// <summary>
+        /*/// <summary>
         /// Register a performance counter as a Gauge metric.
         /// </summary>
         /// <param name="name">Name of this gauge metric. Must be unique across all gauges in this context.</param>
@@ -100,7 +99,7 @@ namespace Metrics
         public static void PerformanceCounter(string name, string counterCategory, string counterName, string counterInstance, Unit unit, MetricTags tags = default(MetricTags))
         {
             globalContext.PerformanceCounter(name, counterCategory, counterName, counterInstance, unit, tags);
-        }
+        }*/
 
         /// <summary>
         /// A gauge is the simplest metric type. It just returns a value. This metric is suitable for instantaneous values.
@@ -120,9 +119,9 @@ namespace Metrics
         /// This metric is suitable for keeping a record of now often something happens ( error, request etc ).
         /// </summary>
         /// <remarks>
-        /// The mean rate is the average rate of events. Itâ€™s generally useful for trivia, 
-        /// but as it represents the total rate for your applicationâ€™s entire lifetime (e.g., the total number of requests handled, 
-        /// divided by the number of seconds the process has been running), it doesnâ€™t offer a sense of recency. 
+        /// The mean rate is the average rate of events. It’s generally useful for trivia, 
+        /// but as it represents the total rate for your application’s entire lifetime (e.g., the total number of requests handled, 
+        /// divided by the number of seconds the process has been running), it doesn’t offer a sense of recency. 
         /// Luckily, meters also record three different exponentially-weighted moving average rates: the 1-, 5-, and 15-minute moving averages.
         /// </remarks>
         /// <param name="name">Name of the metric. Must be unique across all meters in this context.</param>
@@ -173,7 +172,7 @@ namespace Metrics
         /// <param name="durationUnit">Time unit for reporting durations. Defaults to Milliseconds. </param>
         /// <param name="tags">Optional set of tags that can be associated with the metric.</param>
         /// <returns>Reference to the metric</returns>
-        public static Timer Timer(string name, Unit unit, SamplingType samplingType = SamplingType.Default,
+        public static ITimer Timer(string name, Unit unit, SamplingType samplingType = SamplingType.Default,
             TimeUnit rateUnit = TimeUnit.Seconds, TimeUnit durationUnit = TimeUnit.Milliseconds, MetricTags tags = default(MetricTags))
         {
             return globalContext.Timer(name, unit, samplingType, rateUnit, durationUnit, tags);
@@ -190,7 +189,8 @@ namespace Metrics
             {
                 const string contextNameKey = "Metrics.GlobalContextName";
                 // look in the runtime environment first, then in ConfigurationManager.AppSettings
-                var contextNameValue = Environment.GetEnvironmentVariable(contextNameKey) ?? ConfigurationManager.AppSettings[contextNameKey];
+                var contextNameValue = Environment.GetEnvironmentVariable(contextNameKey) ?? ConfigurationManager.Configuration[contextNameKey];
+
                 var name = string.IsNullOrEmpty(contextNameValue) ? GetDefaultGlobalContextName() : ParseGlobalContextName(contextNameValue);
                 log.Debug(() => "Metrics: GlobalContext Name set to " + name);
                 return name;
@@ -245,7 +245,7 @@ namespace Metrics
                 if (string.IsNullOrWhiteSpace(val))
                 {
                     // next look in ConfigurationManager.AppSettings
-                    val = ConfigurationManager.AppSettings[key.Value];
+                    val = ConfigurationManager.Configuration[key.Value];
                     if (string.IsNullOrWhiteSpace(val))
                     {
                         var msg = $"Metrics: Error substituting Environment tokens in Metrics.GlobalContextName. Found key '{key}' has no value in Environment or AppSettings. Original string {configName}";

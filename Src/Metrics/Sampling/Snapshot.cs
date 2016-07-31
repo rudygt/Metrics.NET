@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+
 namespace Metrics.Sampling
 {
     public interface Snapshot

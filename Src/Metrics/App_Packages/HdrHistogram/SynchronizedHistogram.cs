@@ -6,7 +6,6 @@
 // Latest ported version is available in the Java submodule in the root of the repo
 
 using System;
-using System.Runtime.CompilerServices;
 
 namespace HdrHistogram
 {
@@ -29,194 +28,6 @@ namespace HdrHistogram
 
     internal class SynchronizedHistogram : Histogram
     {
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        internal override long getCountAtIndex(int index)
-        {
-            return counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)];
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override long getCountAtNormalizedIndex(int index)
-        {
-            return counts[index];
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void incrementCountAtIndex(int index)
-        {
-            counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)]++;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void addToCountAtIndex(int index, long value)
-        {
-            counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)] += value;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void setCountAtIndex(int index, long value)
-        {
-            counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)] = value;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void setCountAtNormalizedIndex(int index, long value)
-        {
-            counts[index] = value;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override int getNormalizingIndexOffset()
-        {
-            return normalizingIndexOffset;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void setNormalizingIndexOffset(int normalizingIndexOffset)
-        {
-            this.normalizingIndexOffset = normalizingIndexOffset;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void shiftNormalizingIndexByOffset(int offsetToAdd, bool lowestHalfBucketPopulated)
-        {
-            nonConcurrentNormalizingIndexShift(offsetToAdd, lowestHalfBucketPopulated);
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected internal override void clearCounts()
-        {
-            Array.Clear(counts, 0, counts.Length);
-            totalCount = 0;
-        }
-
-        public new void add(AbstractHistogram otherHistogram)
-        {
-            // Synchronize add(). Avoid deadlocks by synchronizing in order of construction identity count.
-            if (Identity < otherHistogram.Identity)
-            {
-                lock (this)
-                {
-                    lock (otherHistogram)
-                    {
-                        base.add(otherHistogram);
-                    }
-                }
-            }
-            else
-            {
-                lock (otherHistogram)
-                {
-                    lock (this)
-                    {
-                        base.add(otherHistogram);
-                    }
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected internal override void shiftValuesLeft(int numberOfBinaryOrdersOfMagnitude)
-        {
-            base.shiftValuesLeft(numberOfBinaryOrdersOfMagnitude);
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected internal override void shiftValuesRight(int numberOfBinaryOrdersOfMagnitude)
-        {
-            base.shiftValuesRight(numberOfBinaryOrdersOfMagnitude);
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public override AbstractHistogram copy()
-        {
-            SynchronizedHistogram copy;
-            lock (this)
-            {
-                copy = new SynchronizedHistogram(this);
-            }
-            copy.add(this);
-            return copy;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public override AbstractHistogram copyCorrectedForCoordinatedOmission(long expectedIntervalBetweenValueSamples)
-        {
-            lock (this)
-            {
-                SynchronizedHistogram toHistogram = new SynchronizedHistogram(this);
-                toHistogram.addWhileCorrectingForCoordinatedOmission(this, expectedIntervalBetweenValueSamples);
-                return toHistogram;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public override long getTotalCount()
-        {
-            return totalCount;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void setTotalCount(long totalCount)
-        {
-            this.totalCount = totalCount;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void incrementTotalCount()
-        {
-            totalCount++;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void addToTotalCount(long value)
-        {
-            totalCount += value;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void updatedMaxValue(long maxValue)
-        {
-            if (maxValue > getMaxValue())
-            {
-                base.updatedMaxValue(maxValue);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected override void updateMinNonZeroValue(long minNonZeroValue)
-        {
-            if (minNonZeroValue < getMinNonZeroValue())
-            {
-                base.updateMinNonZeroValue(minNonZeroValue);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected internal override int _getEstimatedFootprintInBytes()
-        {
-            return (512 + (8 * counts.Length));
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        protected internal override void resize(long newHighestTrackableValue)
-        {
-            int oldNormalizedZeroIndex = NormalizeIndex(0, normalizingIndexOffset, countsArrayLength);
-
-            establishSize(newHighestTrackableValue);
-
-            int countsDelta = countsArrayLength - counts.Length;
-            Array.Resize(ref counts, countsArrayLength);
-
-            if (oldNormalizedZeroIndex != 0)
-            {
-                // We need to shift the stuff from the zero index and up to the end of the array:
-                int newNormalizedZeroIndex = oldNormalizedZeroIndex + countsDelta;
-                int lengthToCopy = (countsArrayLength - countsDelta) - oldNormalizedZeroIndex;
-                Array.Copy(counts, oldNormalizedZeroIndex, counts, newNormalizedZeroIndex, lengthToCopy);
-            }
-        }
-
         /**
      * Construct an auto-resizing SynchronizedHistogram with a lowest discernible value of 1 and an auto-adjusting
      * highestTrackableValue. Can auto-resize up to track values up to (Long.MAX_VALUE / 2).
@@ -228,7 +39,8 @@ namespace HdrHistogram
 
         public SynchronizedHistogram(int numberOfSignificantValueDigits)
             : base(numberOfSignificantValueDigits)
-        { }
+        {
+        }
 
         /**
      * Construct a SynchronizedHistogram given the Highest value to be tracked and a number of significant decimal digits. The
@@ -243,7 +55,8 @@ namespace HdrHistogram
 
         public SynchronizedHistogram(long highestTrackableValue, int numberOfSignificantValueDigits)
             : base(highestTrackableValue, numberOfSignificantValueDigits)
-        { }
+        {
+        }
 
         /**
      * Construct a SynchronizedHistogram given the Lowest and Highest values to be tracked and a number of significant
@@ -276,6 +89,232 @@ namespace HdrHistogram
         public SynchronizedHistogram(AbstractHistogram source)
             : base(source)
         {
+        }
+
+        //   //[MethodImpl(MethodImplOptions.Synchronized)]
+        internal override long getCountAtIndex(int index)
+        {
+            lock (this)
+            {
+                return counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)];
+            }
+        }
+
+        // //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override long getCountAtNormalizedIndex(int index)
+        {
+            lock (this)
+            {
+                return counts[index];
+            }
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void incrementCountAtIndex(int index)
+        {
+            lock (this)
+            {
+                counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)]++;
+            }
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void addToCountAtIndex(int index, long value)
+        {
+            lock (this)
+            {
+                counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)] += value;
+            }
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void setCountAtIndex(int index, long value)
+        {
+            lock (this)
+            {
+                counts[NormalizeIndex(index, normalizingIndexOffset, countsArrayLength)] = value;
+            }
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void setCountAtNormalizedIndex(int index, long value)
+        {
+            lock (this)
+                counts[index] = value;
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override int getNormalizingIndexOffset()
+        {
+            lock (this)
+                return normalizingIndexOffset;
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void setNormalizingIndexOffset(int normalizingIndexOffset)
+        {
+            lock (this)
+                this.normalizingIndexOffset = normalizingIndexOffset;
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void shiftNormalizingIndexByOffset(int offsetToAdd, bool lowestHalfBucketPopulated)
+        {
+            lock (this)
+                nonConcurrentNormalizingIndexShift(offsetToAdd, lowestHalfBucketPopulated);
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected internal override void clearCounts()
+        {
+            lock (this)
+            {
+                Array.Clear(counts, 0, counts.Length);
+                totalCount = 0;
+            }
+        }
+
+        public new void add(AbstractHistogram otherHistogram)
+        {
+            // Synchronize add(). Avoid deadlocks by synchronizing in order of construction identity count.
+            if (Identity < otherHistogram.Identity)
+            {
+                lock (this)
+                {
+                    lock (otherHistogram)
+                    {
+                        base.add(otherHistogram);
+                    }
+                }
+            }
+            else
+            {
+                lock (otherHistogram)
+                {
+                    lock (this)
+                    {
+                        base.add(otherHistogram);
+                    }
+                }
+            }
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected internal override void shiftValuesLeft(int numberOfBinaryOrdersOfMagnitude)
+        {
+            lock (this)
+                base.shiftValuesLeft(numberOfBinaryOrdersOfMagnitude);
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected internal override void shiftValuesRight(int numberOfBinaryOrdersOfMagnitude)
+        {
+            lock (this)
+                base.shiftValuesRight(numberOfBinaryOrdersOfMagnitude);
+        }
+
+        ////[MethodImpl(MethodImplOptions.Synchronized)]
+        public override AbstractHistogram copy()
+        {
+            lock (this)
+            {
+                SynchronizedHistogram copy;
+
+
+                copy = new SynchronizedHistogram(this);
+
+                copy.add(this);
+                return copy;
+            }
+        }
+
+        public override AbstractHistogram copyCorrectedForCoordinatedOmission(long expectedIntervalBetweenValueSamples)
+        {
+            lock (this)
+            {
+                var toHistogram = new SynchronizedHistogram(this);
+                toHistogram.addWhileCorrectingForCoordinatedOmission(this, expectedIntervalBetweenValueSamples);
+                return toHistogram;
+            }
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        public override long getTotalCount()
+        {
+            lock (this)
+                return totalCount;
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void setTotalCount(long totalCount)
+        {
+            lock (this)
+                this.totalCount = totalCount;
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void incrementTotalCount()
+        {
+            lock (this)
+                totalCount++;
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void addToTotalCount(long value)
+        {
+            lock (this)
+                totalCount += value;
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void updatedMaxValue(long maxValue)
+        {
+            lock (this)
+            {
+                if (maxValue > getMaxValue())
+                {
+                    base.updatedMaxValue(maxValue);
+                }
+            }
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected override void updateMinNonZeroValue(long minNonZeroValue)
+        {
+            lock (this)
+                if (minNonZeroValue < getMinNonZeroValue())
+                {
+                    base.updateMinNonZeroValue(minNonZeroValue);
+                }
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected internal override int _getEstimatedFootprintInBytes()
+        {
+            lock (this)
+                return 512 + 8*counts.Length;
+        }
+
+        //[MethodImpl(MethodImplOptions.Synchronized)]
+        protected internal override void resize(long newHighestTrackableValue)
+        {
+            lock (this)
+            {
+                var oldNormalizedZeroIndex = NormalizeIndex(0, normalizingIndexOffset, countsArrayLength);
+
+                establishSize(newHighestTrackableValue);
+
+                var countsDelta = countsArrayLength - counts.Length;
+                Array.Resize(ref counts, countsArrayLength);
+
+                if (oldNormalizedZeroIndex != 0)
+                {
+                    // We need to shift the stuff from the zero index and up to the end of the array:
+                    var newNormalizedZeroIndex = oldNormalizedZeroIndex + countsDelta;
+                    var lengthToCopy = countsArrayLength - countsDelta - oldNormalizedZeroIndex;
+                    Array.Copy(counts, oldNormalizedZeroIndex, counts, newNormalizedZeroIndex, lengthToCopy);
+                }
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿
 using System.Collections.Generic;
+
 namespace Metrics.Sampling
 {
     public struct UserValueWrapper

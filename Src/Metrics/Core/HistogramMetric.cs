@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using Metrics.MetricData;
 using Metrics.Sampling;
 
 namespace Metrics.Core
 {
-    public interface HistogramImplementation : Histogram, MetricValueProvider<HistogramValue> { }
-
     public sealed class HistogramMetric : HistogramImplementation
     {
         private readonly Reservoir reservoir;
@@ -59,7 +57,7 @@ namespace Metrics.Core
                 switch (samplingType)
                 {
                     case SamplingType.Default:
-                        samplingType = Metric.Config.DefaultSamplingType;
+                        samplingType = SamplingType.Default; // TODO: replace with this -> Metric.Config.DefaultSamplingType;
                         continue;
                     case SamplingType.HighDynamicRange:
                         return new HdrHistogramReservoir();

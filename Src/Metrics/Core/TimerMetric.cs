@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Metrics.ConcurrencyUtilities;
 using Metrics.MetricData;
 using Metrics.Sampling;
@@ -6,8 +6,6 @@ using Metrics.Utils;
 
 namespace Metrics.Core
 {
-    public interface TimerImplementation : Timer, MetricValueProvider<TimerValue> { }
-
     public sealed class TimerMetric : TimerImplementation, IDisposable
     {
         private readonly Clock clock;

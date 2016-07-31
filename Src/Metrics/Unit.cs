@@ -1,8 +1,8 @@
-﻿
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Globalization;
 using Metrics.Utils;
+
 namespace Metrics
 {
     [DebuggerDisplay("{Name}")]
@@ -29,7 +29,7 @@ namespace Metrics
 
         public static implicit operator Unit(string name)
         {
-            return Unit.Custom(name);
+            return Custom(name);
         }
 
         public readonly string Name;
@@ -41,40 +41,41 @@ namespace Metrics
                 throw new ArgumentNullException(nameof(name));
             }
 
-            this.Name = name;
+            Name = name;
         }
 
         public override string ToString()
         {
-            return this.Name;
+            return Name;
         }
 
         public string FormatCount(long value)
         {
-            if (!string.IsNullOrEmpty(this.Name))
+            if (!string.IsNullOrEmpty(Name))
             {
-                return $"{value.ToString(CultureInfo.InvariantCulture)} {this.Name}";
+                return $"{value.ToString(CultureInfo.InvariantCulture)} {Name}";
             }
             return value.ToString();
         }
 
         public string FormatValue(double value)
         {
-            if (!string.IsNullOrEmpty(this.Name))
+            if (!string.IsNullOrEmpty(Name))
             {
-                return $"{value.ToString("F2", CultureInfo.InvariantCulture)} {this.Name}";
+                return $"{value.ToString("F2", CultureInfo.InvariantCulture)} {Name}";
             }
             return value.ToString("F2", CultureInfo.InvariantCulture);
         }
 
         public string FormatRate(double value, TimeUnit timeUnit)
         {
-            return $"{value.ToString("F2", CultureInfo.InvariantCulture)} {this.Name}/{timeUnit.Unit()}";
+            return $"{value.ToString("F2", CultureInfo.InvariantCulture)} {Name}/{timeUnit.Unit()}";
         }
 
         public string FormatDuration(double value, TimeUnit? timeUnit)
         {
-            return $"{value.ToString("F2", CultureInfo.InvariantCulture)} {(timeUnit.HasValue ? timeUnit.Value.Unit() : this.Name)}";
+            return
+                $"{value.ToString("F2", CultureInfo.InvariantCulture)} {(timeUnit.HasValue ? timeUnit.Value.Unit() : Name)}";
         }
     }
 }

@@ -1,4 +1,3 @@
-﻿
 namespace Metrics.MetricData
 {
     public struct EnvironmentEntry
@@ -8,8 +7,8 @@ namespace Metrics.MetricData
 
         public EnvironmentEntry(string name, string value)
         {
-            this.Name = name;
-            this.Value = value;
+            Name = name;
+            Value = value;
         }
     }
 }

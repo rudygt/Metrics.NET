@@ -1,14 +1,12 @@
-﻿
-using Metrics.MetricData;
-using Metrics.Utils;
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading;
+using Metrics.MetricData;
+using Metrics.Utils;
+
 namespace Metrics.Core
 {
-    public interface MeterImplementation : Meter, MetricValueProvider<MeterValue> { }
-
     public sealed class MeterMetric : SimpleMeter, MeterImplementation, IDisposable
     {
         private static readonly TimeSpan TickInterval = TimeSpan.FromSeconds(5);

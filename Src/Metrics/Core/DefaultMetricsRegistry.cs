@@ -1,7 +1,7 @@
-﻿using Metrics.MetricData;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using Metrics.MetricData;
 using System.Linq;
 
 namespace Metrics.Core
@@ -58,7 +58,7 @@ namespace Metrics.Core
             {
                 foreach (var metric in this.metrics.Values)
                 {
-                    var resetable = metric.Metric as ResetableMetric;
+                    var resetable = metric.Metric as IResetableMetric;
                     resetable?.Reset();
                 }
             }
@@ -69,7 +69,7 @@ namespace Metrics.Core
         private readonly MetricMetaCatalog<Meter, MeterValueSource, MeterValue> meters = new MetricMetaCatalog<Meter, MeterValueSource, MeterValue>();
         private readonly MetricMetaCatalog<Histogram, HistogramValueSource, HistogramValue> histograms =
             new MetricMetaCatalog<Histogram, HistogramValueSource, HistogramValue>();
-        private readonly MetricMetaCatalog<Timer, TimerValueSource, TimerValue> timers = new MetricMetaCatalog<Timer, TimerValueSource, TimerValue>();
+        private readonly MetricMetaCatalog<ITimer, TimerValueSource, TimerValue> timers = new MetricMetaCatalog<ITimer, TimerValueSource, TimerValue>();
 
         public DefaultMetricsRegistry()
         {
@@ -117,13 +117,13 @@ namespace Metrics.Core
             });
         }
 
-        public Timer Timer<T>(string name, Func<T> builder, Unit unit, TimeUnit rateUnit, TimeUnit durationUnit, MetricTags tags)
+        public ITimer Timer<T>(string name, Func<T> builder, Unit unit, TimeUnit rateUnit, TimeUnit durationUnit, MetricTags tags)
             where T : TimerImplementation
         {
             return this.timers.GetOrAdd(name, () =>
             {
                 T timer = builder();
-                return Tuple.Create((Timer)timer, new TimerValueSource(name, timer, unit, rateUnit, durationUnit, tags));
+                return Tuple.Create((ITimer)timer, new TimerValueSource(name, timer, unit, rateUnit, durationUnit, tags));
             });
         }
 

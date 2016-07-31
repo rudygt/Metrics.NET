@@ -1,8 +1,6 @@
-﻿
-using Metrics.ConcurrencyUtilities;
 using System;
 using System.Linq;
-using static System.Math;
+using Metrics.ConcurrencyUtilities;
 
 namespace Metrics.Sampling
 {
@@ -23,7 +21,7 @@ namespace Metrics.Sampling
             this.values = new UserValueWrapper[size];
         }
 
-        public int Size => Min((int)this.count.GetValue(), this.values.Length);
+        public int Size => Math.Min((int)this.count.GetValue(), this.values.Length);
 
         public Snapshot GetSnapshot(bool resetReservoir = false)
         {

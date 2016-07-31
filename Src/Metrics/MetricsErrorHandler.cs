@@ -1,28 +1,23 @@
-﻿
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using Metrics.Logging;
+
 namespace Metrics
 {
     public class MetricsErrorHandler
     {
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
-        private static readonly Meter errorMeter = Metric.Internal.Meter("Metrics Errors", Unit.Errors);
+        private static readonly ILog log = LogProvider.GetLogger(typeof(MetricsErrorHandler));
+
+        private static readonly Meter errorMeter = Metric.Internal.Meter("Metrics Errors", Unit.Errors);        
 
         private readonly ConcurrentBag<Action<Exception, string>> handlers = new ConcurrentBag<Action<Exception, string>>();
 
-        private static readonly bool isMono = Type.GetType("Mono.Runtime") != null;
-
         private MetricsErrorHandler()
         {
-            this.AddHandler((x, msg) => log.ErrorException("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", x, msg, x.Message));
-            this.AddHandler((x, msg) => Trace.TraceError("Metrics: Unhandled exception in Metrics.NET Library " + x.ToString()));
-
-            if (Environment.UserInteractive || isMono)
-            {
-                this.AddHandler((x, msg) => Console.WriteLine("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", msg, x.ToString()));
-            }
+            AddHandler((x, msg) => log.ErrorException("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", x, msg, x.Message));
+            AddHandler((x, msg) => Trace.TraceError("Metrics: Unhandled exception in Metrics.NET Library " + x.ToString()));
+            AddHandler((x, msg) => Console.WriteLine("Metrics: Unhandled exception in Metrics.NET Library {0} {1}", msg, x.ToString()));
         }
 
         internal static MetricsErrorHandler Handler { get; } = new MetricsErrorHandler();

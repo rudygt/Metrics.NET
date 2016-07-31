@@ -1,12 +1,12 @@
-﻿using Metrics.MetricData;
 using System;
 using System.Collections.Generic;
+using Metrics.MetricData;
 
 namespace Metrics.Core
 {
     public sealed class NullMetricsRegistry : MetricsRegistry
     {
-        private struct NullMetric : Counter, Meter, Histogram, Timer, RegistryDataProvider
+        private struct NullMetric : Counter, Meter, Histogram, ITimer, RegistryDataProvider
         {
             public static readonly NullMetric Instance = new NullMetric();
             private static readonly TimerContext NullContext = new TimerContext(NullMetric.Instance, null);
@@ -67,7 +67,7 @@ namespace Metrics.Core
             return NullMetric.Instance;
         }
 
-        public Timer Timer<T>(string name, Func<T> builder, Unit unit, TimeUnit rateUnit, TimeUnit durationUnit, MetricTags tags) where T : TimerImplementation
+        public ITimer Timer<T>(string name, Func<T> builder, Unit unit, TimeUnit rateUnit, TimeUnit durationUnit, MetricTags tags) where T : TimerImplementation
         {
             return NullMetric.Instance;
         }

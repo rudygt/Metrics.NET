@@ -1,5 +1,3 @@
-﻿
-
 namespace Metrics.Sampling
 {
     public interface Reservoir

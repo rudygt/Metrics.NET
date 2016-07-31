@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -85,7 +85,7 @@ namespace Metrics.Utils
         {
             if (this.token != null)
             {
-                token.Cancel();
+                this.token.Cancel();
             }
         }
 

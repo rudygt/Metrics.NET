@@ -35,7 +35,7 @@ internal
 #endif
     static class ThreadLocalRandom
     {
-        private static readonly ThreadLocal<Random> LocalRandom = new ThreadLocal<Random>(() => new Random(Thread.CurrentThread.ManagedThreadId));
+        private static readonly ThreadLocal<Random> LocalRandom = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
 
         public static int Next() { return LocalRandom.Value.Next(); }
         public static int Next(int maxValue) { return LocalRandom.Value.Next(); }

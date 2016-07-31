@@ -1,4 +1,4 @@
-﻿using HdrHistogram;
+using HdrHistogram;
 using Metrics.ConcurrencyUtilities;
 
 namespace Metrics.Sampling

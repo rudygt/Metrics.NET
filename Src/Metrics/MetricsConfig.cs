@@ -1,20 +1,16 @@
-﻿
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
 using Metrics.Logging;
 using Metrics.MetricData;
 using Metrics.Reports;
-using Metrics.Visualization;
+using Metrics.Utils;
 
 namespace Metrics
 {
     public sealed class MetricsConfig : IDisposable, Utils.IHideObjectMembers
     {
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog log = LogProvider.GetLogger(typeof(MetricsConfig));
 
         public static readonly bool GloballyDisabledMetrics = ReadGloballyDisableMetricsSetting();
 
@@ -25,12 +21,12 @@ namespace Metrics
 
         private readonly CancellationTokenSource httpEndpointCancellation = new CancellationTokenSource();
 
-        private readonly Dictionary<string,Task<MetricsHttpListener>> httpEndpoints = new Dictionary<string, Task<MetricsHttpListener>>();
+        //private readonly Dictionary<string, Task<MetricsHttpListener>> httpEndpoints = new Dictionary<string, Task<MetricsHttpListener>>();
 
         private SamplingType defaultSamplingType = SamplingType.ExponentiallyDecaying;
 
         private bool isDisabled = MetricsConfig.GloballyDisabledMetrics;
-        
+
         /// <summary>
         /// Gets the currently configured default sampling type to use for histogram sampling.
         /// </summary>
@@ -76,16 +72,17 @@ namespace Metrics
                 return this;
             }
 
-            if (this.httpEndpoints.ContainsKey(httpUriPrefix))
+            /*if (this.httpEndpoints.ContainsKey(httpUriPrefix))
             {
                 log.WarnFormat("Http uri prefix {0} already registered. Ignoring...", httpUriPrefix);
                 return this;
             }
 
-            var endpoint = MetricsHttpListener.StartHttpListenerAsync(httpUriPrefix, this.context.DataProvider.WithFilter(filter), 
+            var endpoint = MetricsHttpListener.StartHttpListenerAsync(httpUriPrefix, this.context.DataProvider.WithFilter(filter),
                 this.healthStatus, this.httpEndpointCancellation.Token, maxRetries);
-            this.httpEndpoints.Add(httpUriPrefix,endpoint);
-          
+            this.httpEndpoints.Add(httpUriPrefix, endpoint);
+            */
+
             return this;
         }
 
@@ -213,13 +210,13 @@ namespace Metrics
 
         public void Dispose()
         {
-            ShutdownHttpEndpoints();
+            //ShutdownHttpEndpoints();
             this.reports.Dispose();
         }
 
         private void ShutdownHttpEndpoints()
         {
-            this.httpEndpointCancellation.Cancel();
+            /*this.httpEndpointCancellation.Cancel();
             foreach (var endpoint in this.httpEndpoints.Values)
             {
                 if (endpoint.IsCompleted)
@@ -233,7 +230,7 @@ namespace Metrics
                     log.Warn("The task for Metrics Http Endpoint has not completed. Listener will not be disposed");
                 }
             }
-            this.httpEndpoints.Clear();
+            this.httpEndpoints.Clear();*/
         }
 
         private void DisableAllReports()
@@ -255,7 +252,7 @@ namespace Metrics
         {
             try
             {
-                var httpEndpoint = ConfigurationManager.AppSettings["Metrics.HttpListener.HttpUriPrefix"];
+                var httpEndpoint = ConfigurationManager.Configuration["Metrics.HttpListener.HttpUriPrefix"];
                 if (!string.IsNullOrEmpty(httpEndpoint))
                 {
                     WithHttpEndpoint(httpEndpoint);
@@ -272,8 +269,8 @@ namespace Metrics
         {
             try
             {
-                var csvMetricsPath = ConfigurationManager.AppSettings["Metrics.CSV.Path"];
-                var csvMetricsInterval = ConfigurationManager.AppSettings["Metrics.CSV.Interval.Seconds"];
+                var csvMetricsPath = ConfigurationManager.Configuration["Metrics.CSV.Path"];
+                var csvMetricsInterval = ConfigurationManager.Configuration["Metrics.CSV.Interval.Seconds"];
 
                 if (!string.IsNullOrEmpty(csvMetricsPath) && !string.IsNullOrEmpty(csvMetricsInterval))
                 {
@@ -295,8 +292,8 @@ namespace Metrics
         {
             try
             {
-                var isDisabled = ConfigurationManager.AppSettings["Metrics.CompletelyDisableMetrics"];
-                return !string.IsNullOrEmpty(isDisabled) && isDisabled.Equals("TRUE",StringComparison.OrdinalIgnoreCase);
+                var isDisabled = ConfigurationManager.Configuration["Metrics.CompletelyDisableMetrics"];
+                return !string.IsNullOrEmpty(isDisabled) && isDisabled.Equals("TRUE", StringComparison.OrdinalIgnoreCase);
             }
             catch (Exception x)
             {

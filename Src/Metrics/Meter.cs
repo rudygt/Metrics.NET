@@ -1,14 +1,13 @@
-ï»¿
 namespace Metrics
 {
     /// <summary>
     /// A meter measures the rate at which a set of events occur, in a few different ways. 
-    /// The mean rate is the average rate of events. Itâ€™s generally useful for trivia, 
-    /// but as it represents the total rate for your applicationâ€™s entire lifetime (e.g., the total number of requests handled, 
-    /// divided by the number of seconds the process has been running), it doesnâ€™t offer a sense of recency. 
+    /// The mean rate is the average rate of events. It’s generally useful for trivia, 
+    /// but as it represents the total rate for your application’s entire lifetime (e.g., the total number of requests handled, 
+    /// divided by the number of seconds the process has been running), it doesn’t offer a sense of recency. 
     /// Luckily, meters also record three different exponentially-weighted moving average rates: the 1-, 5-, and 15-minute moving averages.
     /// </summary>
-    public interface Meter : ResetableMetric
+    public interface Meter : IResetableMetric
     {
         /// <summary>
         /// Mark the occurrence of an event.

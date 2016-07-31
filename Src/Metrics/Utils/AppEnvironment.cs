@@ -1,9 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using Metrics.Logging;
 using Metrics.MetricData;
@@ -12,21 +8,21 @@ namespace Metrics.Utils
 {
     public static class AppEnvironment
     {
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog log = LogProvider.GetLogger(typeof(AppEnvironment));
 
         public static IEnumerable<EnvironmentEntry> Current
         {
             get
             {
                 yield return new EnvironmentEntry("MachineName", Environment.MachineName);
-                yield return new EnvironmentEntry("DomainName", Environment.UserDomainName);
-                yield return new EnvironmentEntry("UserName", Environment.UserName);
-                yield return new EnvironmentEntry("ProcessName", SafeGetString(() => Process.GetCurrentProcess().ProcessName));
-                yield return new EnvironmentEntry("OSVersion", Environment.OSVersion.ToString());
+                yield return new EnvironmentEntry("DomainName", /*Environment.UserDomainName*/ "DomainName");
+                yield return new EnvironmentEntry("UserName", /*Environment.UserName*/ "UserName");
+                yield return new EnvironmentEntry("ProcessName", /*SafeGetString(() => Process.GetCurrentProcess().ProcessName)*/ "ProcessName");
+                yield return new EnvironmentEntry("OSVersion", /*Environment.OSVersion.ToString()*/ "OsVersion");
                 yield return new EnvironmentEntry("CPUCount", Environment.ProcessorCount.ToString());
-                yield return new EnvironmentEntry("CommandLine", Environment.CommandLine);
-                yield return new EnvironmentEntry("HostName", SafeGetString(Dns.GetHostName));
-                yield return new EnvironmentEntry("IPAddress", SafeGetString(GetIpAddress));
+                yield return new EnvironmentEntry("CommandLine", /*Environment.CommandLine*/ "CommandLine");
+                yield return new EnvironmentEntry("HostName", /*SafeGetString(Dns.GetHostName)*/ "HostName");
+                yield return new EnvironmentEntry("IPAddress", /*SafeGetString(GetIpAddress)*/ "IpAddress");
                 yield return new EnvironmentEntry("LocalTime", Clock.FormatTimestamp(DateTime.Now));
 
                 var entryAssembly = Assembly.GetEntryAssembly();
@@ -39,7 +35,7 @@ namespace Metrics.Utils
             }
         }
 
-        private static string GetIpAddress()
+        /*private static string GetIpAddress()
         {
             string hostName = SafeGetString(Dns.GetHostName);
             try
@@ -63,7 +59,7 @@ namespace Metrics.Utils
                 }
                 throw;
             }
-        }
+        }*/
 
         private static string SafeGetString(Func<string> action)
         {
@@ -85,7 +81,7 @@ namespace Metrics.Utils
         public static string ResolveAspSiteName()
         {
             const string UnknownName = "UnknownSiteName";
-            try
+            /*try
             {
                 var runtimeType = Type.GetType("System.Web.HttpRuntime, System.Web, Version=0.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", false, true);
                 if (runtimeType != null)
@@ -130,7 +126,7 @@ namespace Metrics.Utils
             catch (Exception e)
             {
                 log.WarnException("Unable to find type System.Web.HttpRuntime to resolve AspSiteName $Env.AppDomainAppVirtualPath$ macro", e);
-            }
+            }*/
 
             return UnknownName;
         }
