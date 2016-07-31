@@ -9,19 +9,19 @@ namespace Metrics.MetricData
         public ScaledValueProvider(MetricValueProvider<T> valueProvider, Func<T, T> transformation)
         {
             ValueProvider = valueProvider;
-            scalingFunction = transformation;
+            this.scalingFunction = transformation;
         }
 
         public MetricValueProvider<T> ValueProvider { get; }
 
         public T Value
         {
-            get { return scalingFunction(ValueProvider.Value); }
+            get { return this.scalingFunction(ValueProvider.Value); }
         }
 
         public T GetValue(bool resetMetric = false)
         {
-            return scalingFunction(ValueProvider.GetValue(resetMetric));
+            return this.scalingFunction(ValueProvider.GetValue(resetMetric));
         }
     }
 }

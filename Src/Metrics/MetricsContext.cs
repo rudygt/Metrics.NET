@@ -2,10 +2,6 @@ using System;
 using Metrics.MetricData;
 using Metrics.Utils;
 
-namespace Metrics.Reports
-{
-}
-
 namespace Metrics
 {
     /// <summary>

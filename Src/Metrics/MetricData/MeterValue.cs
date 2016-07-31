@@ -38,30 +38,30 @@ namespace Metrics.MetricData
                 throw new ArgumentNullException(nameof(items));
             }
 
-            Count = count;
-            MeanRate = meanRate;
-            OneMinuteRate = oneMinuteRate;
-            FiveMinuteRate = fiveMinuteRate;
-            FifteenMinuteRate = fifteenMinuteRate;
-            RateUnit = rateUnit;
-            Items = items;
+            this.Count = count;
+            this.MeanRate = meanRate;
+            this.OneMinuteRate = oneMinuteRate;
+            this.FiveMinuteRate = fiveMinuteRate;
+            this.FifteenMinuteRate = fifteenMinuteRate;
+            this.RateUnit = rateUnit;
+            this.Items = items;
         }
 
         public MeterValue Scale(TimeUnit unit)
         {
-            if (unit == RateUnit)
+            if (unit == this.RateUnit)
             {
                 return this;
             }
 
             var factor = unit.ScalingFactorFor(TimeUnit.Seconds);
-            return new MeterValue(Count,
-                MeanRate*factor,
-                OneMinuteRate*factor,
-                FiveMinuteRate*factor,
-                FifteenMinuteRate*factor,
+            return new MeterValue(this.Count,
+                this.MeanRate*factor,
+                this.OneMinuteRate*factor,
+                this.FiveMinuteRate*factor,
+                this.FifteenMinuteRate*factor,
                 unit,
-                Items.Select(i => new SetItem(i.Item, i.Percent, i.Value.Scale(unit))).ToArray());
+                this.Items.Select(i => new SetItem(i.Item, i.Percent, i.Value.Scale(unit))).ToArray());
         }
 
         public struct SetItem
@@ -72,9 +72,9 @@ namespace Metrics.MetricData
 
             public SetItem(string item, double percent, MeterValue value)
             {
-                Item = item;
-                Percent = percent;
-                Value = value;
+                this.Item = item;
+                this.Percent = percent;
+                this.Value = value;
             }
         }
     }

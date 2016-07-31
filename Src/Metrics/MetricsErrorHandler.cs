@@ -9,11 +9,9 @@ namespace Metrics
     {
         private static readonly ILog log = LogProvider.GetLogger(typeof(MetricsErrorHandler));
 
-        private static readonly Meter ErrorMeter = Metric.Internal.Meter("Metrics Errors", Unit.Errors);
+        private static readonly Meter errorMeter = Metric.Internal.Meter("Metrics Errors", Unit.Errors);        
 
-        private static readonly bool IsMono = Type.GetType("Mono.Runtime") != null;
-
-        private readonly ConcurrentBag<Action<Exception, string>> _handlers = new ConcurrentBag<Action<Exception, string>>();
+        private readonly ConcurrentBag<Action<Exception, string>> handlers = new ConcurrentBag<Action<Exception, string>>();
 
         private MetricsErrorHandler()
         {
@@ -31,23 +29,23 @@ namespace Metrics
 
         internal void AddHandler(Action<Exception, string> handler)
         {
-            _handlers.Add(handler);
+            this.handlers.Add(handler);
         }
 
         internal void ClearHandlers()
         {
-            while (!_handlers.IsEmpty)
+            while (!this.handlers.IsEmpty)
             {
                 Action<Exception, string> item;
-                _handlers.TryTake(out item);
+                this.handlers.TryTake(out item);
             }
         }
 
         private void InternalHandle(Exception exception, string message)
         {
-            ErrorMeter.Mark();
+            errorMeter.Mark();
 
-            foreach (var handler in _handlers)
+            foreach (var handler in this.handlers)
             {
                 try
                 {

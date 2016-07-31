@@ -3,18 +3,6 @@ using System.Diagnostics;
 using System.Globalization;
 using Metrics.Utils;
 
-namespace Metrics.Core
-{
-}
-
-namespace Metrics.MetricData
-{
-}
-
-namespace Metrics.MetricData
-{
-}
-
 namespace Metrics
 {
     [DebuggerDisplay("{Name}")]
