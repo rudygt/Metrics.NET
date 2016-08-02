@@ -4,7 +4,10 @@
   "dependencies": {
     "Microsoft.CSharp": "4.0.1",
     "Microsoft.Extensions.Configuration": "1.0.0",
-    "NETStandard.Library": "1.6.0",
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0"
+    },
     "System.Diagnostics.Process": "4.1.0",
     "System.Diagnostics.TraceSource": "4.0.0",
     "System.Dynamic.Runtime": "4.0.11",
@@ -12,9 +15,9 @@
   },
 
   "frameworks": {
-    "netstandard1.6": {
+    "netcoreapp1.0": {
       "buildOptions": {
-        "define": [ "LIBLOG_PORTABLE"]
+        "define": [ "LIBLOG_PORTABLE" ]
       },
       "imports": "dnxcore50"
     }
