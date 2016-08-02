@@ -12,13 +12,14 @@ namespace Metrics.Visualization
         private const string FavIconResource = "Metrics.Visualization.metrics_32.png";
 
         public const string FavIconMimeType = "image/png";
+
         private static readonly Assembly thisAssembly = typeof(FlotWebApp).GetTypeInfo().Assembly;
 
         private static readonly Lazy<string> htmlContent = new Lazy<string>(ReadFromEmbededResource);
 
         private static string ReadFromEmbededResource()
-        {
-            using (var stream = thisAssembly.GetManifestResourceStream("Metrics.Visualization.index.full.html.gz"))
+        {                          
+            using (var stream = thisAssembly.GetManifestResourceStream(FlotAppResource))
             using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
             using (var reader = new StreamReader(gzip))
             {
