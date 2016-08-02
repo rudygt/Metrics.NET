@@ -3,9 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 
 namespace Metrics.Utils
-{
-    //TODO: fix environment usage
-
+{    
     public abstract class Clock
     {
         private sealed class StopwatchClock : Clock

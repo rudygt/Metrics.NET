@@ -57,7 +57,7 @@ namespace Metrics.Core
                 switch (samplingType)
                 {
                     case SamplingType.Default:
-                        samplingType = SamplingType.Default; // TODO: replace with this -> Metric.Config.DefaultSamplingType;
+                        samplingType = Metric.Config.DefaultSamplingType;
                         continue;
                     case SamplingType.HighDynamicRange:
                         return new HdrHistogramReservoir();

@@ -6,6 +6,7 @@ using Metrics.MetricData;
 
 namespace Metrics.Utils
 {
+    //TODO: fix environment usage
     public static class AppEnvironment
     {
         private static readonly ILog log = LogProvider.GetLogger(typeof(AppEnvironment));
@@ -70,12 +71,12 @@ namespace Metrics.Utils
             catch (Exception x)
             {
                 MetricsErrorHandler.Handle(x, "Error retrieving environment value");
-                return String.Empty;
+                return string.Empty;
             }
         }
 
         /// <summary>
-        /// Try to resolve Asp site name without compile-time linking System.Web assembly.
+        ///     Try to resolve Asp site name without compile-time linking System.Web assembly.
         /// </summary>
         /// <returns>Site name if able to identify</returns>
         public static string ResolveAspSiteName()
