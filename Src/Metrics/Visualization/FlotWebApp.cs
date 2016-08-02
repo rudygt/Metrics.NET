@@ -1,0 +1,58 @@
+﻿using System;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Reflection;
+
+namespace Metrics.Visualization
+{
+    public static class FlotWebApp
+    {
+        private const string FlotAppResource = "Metrics.Visualization.index.full.html.gz";
+        private const string FavIconResource = "Metrics.Visualization.metrics_32.png";
+
+        public const string FavIconMimeType = "image/png";
+        private static readonly Assembly thisAssembly = typeof(FlotWebApp).GetTypeInfo().Assembly;
+
+        private static readonly Lazy<string> htmlContent = new Lazy<string>(ReadFromEmbededResource);
+
+        private static string ReadFromEmbededResource()
+        {
+            using (var stream = thisAssembly.GetManifestResourceStream("Metrics.Visualization.index.full.html.gz"))
+            using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
+            using (var reader = new StreamReader(gzip))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        public static string GetFlotApp()
+        {
+            return htmlContent.Value;
+        }
+
+        public static void WriteFavIcon(Stream output)
+        {
+            using (var stream = thisAssembly.GetManifestResourceStream(FavIconResource))
+            {
+                Debug.Assert(stream != null, "Unable to read embeded flot app");
+                stream.CopyTo(output);
+            }
+        }
+
+        public static Stream GetAppStream(bool decompress = false)
+        {
+            var stream = !decompress ? thisAssembly.GetManifestResourceStream(FlotAppResource) : new GZipStream(GetAppStream(), CompressionMode.Decompress, false);
+            Debug.Assert(stream != null, "Unable to read embeded flot app");
+            return stream;
+        }
+
+        public static void WriteFlotAppAsync(Stream output, bool decompress = false)
+        {
+            using (var stream = GetAppStream(decompress))
+            {
+                stream.CopyTo(output);
+            }
+        }
+    }
+}
