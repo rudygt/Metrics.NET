@@ -1,6 +1,6 @@
 using System;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public class ConsoleReport : HumanReadableReport
     {

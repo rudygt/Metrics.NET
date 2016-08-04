@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public class TextFileReport : HumanReadableReport
     {

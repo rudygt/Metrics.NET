@@ -2,7 +2,7 @@ using System.Linq;
 using Metrics.MetricData;
 using Metrics.Utils;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public abstract class HumanReadableReport : BaseReport
     {

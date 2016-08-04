@@ -3,7 +3,7 @@ using System.Threading;
 using Metrics.MetricData;
 using Metrics.Utils;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public sealed class ScheduledReporter : IDisposable
     {

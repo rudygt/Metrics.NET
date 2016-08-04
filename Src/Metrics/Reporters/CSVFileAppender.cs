@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public class CSVFileAppender : CSVAppender
     {

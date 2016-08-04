@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public class ConsoleCSVAppender : CSVAppender
     {

@@ -2,10 +2,13 @@
   "version": "1.0.0-*",
 
   "dependencies": {
+    "Metrics": "1.0.0-*",
     "Microsoft.NETCore.App": {
       "type": "platform",
       "version": "1.0.0"
-    }
+    },
+    "Nancy": "2.0.0-barneyrubble",
+    "Microsoft.CSharp": "4.0.1"
   },
 
   "frameworks": {

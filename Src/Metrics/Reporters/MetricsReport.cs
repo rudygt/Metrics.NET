@@ -2,7 +2,7 @@ using System;
 using System.Threading;
 using Metrics.MetricData;
 
-namespace Metrics.Reports
+namespace Metrics.Reporters
 {
     public interface MetricsReport : Utils.IHideObjectMembers
     {
