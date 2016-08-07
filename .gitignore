@@ -178,3 +178,6 @@ FakesAssemblies/
 
 # Visual Studio Items
 .vs/
+
+# project lock json
+*.lock.json
