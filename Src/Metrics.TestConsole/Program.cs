@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Metrics.ElasticSearch;
 using Metrics.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -102,7 +103,7 @@ namespace Metrics.TestConsole
             Console.WriteLine(appConfig.Smtp.User);
             Console.WriteLine(appConfig.Logging.IncludeScopes);
 
-            Metric.Config.WithNancy(ApplicationPipelines);
+            Metric.Config.WithNancy(ApplicationPipelines).WithReporting(config => config.WithConsoleReport(TimeSpan.FromSeconds(30)).WithElasticSearch(new ElasticReportsConfig() {Host = "127.0.0.1", Port = 9200, Index = "sample", RollingIndexType = RollingIndexType.Daily}, TimeSpan.FromSeconds(30)));
         }
     }
 }

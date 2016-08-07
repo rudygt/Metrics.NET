@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using Metrics.Logging;
 using Metrics.MetricData;
+using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Metrics.Utils
 {
@@ -19,11 +23,11 @@ namespace Metrics.Utils
                 yield return new EnvironmentEntry("DomainName", /*Environment.UserDomainName*/ "DomainName");
                 yield return new EnvironmentEntry("UserName", /*Environment.UserName*/ "UserName");
                 yield return new EnvironmentEntry("ProcessName", /*SafeGetString(() => Process.GetCurrentProcess().ProcessName)*/ "ProcessName");
-                yield return new EnvironmentEntry("OSVersion", /*Environment.OSVersion.ToString()*/ "OsVersion");
+                yield return new EnvironmentEntry("OSVersion", RuntimeInformation.OSDescription);
                 yield return new EnvironmentEntry("CPUCount", Environment.ProcessorCount.ToString());
                 yield return new EnvironmentEntry("CommandLine", /*Environment.CommandLine*/ "CommandLine");
-                yield return new EnvironmentEntry("HostName", /*SafeGetString(Dns.GetHostName)*/ "HostName");
-                yield return new EnvironmentEntry("IPAddress", /*SafeGetString(GetIpAddress)*/ "IpAddress");
+                yield return new EnvironmentEntry("HostName", SafeGetString(Dns.GetHostName));
+                yield return new EnvironmentEntry("IPAddress", SafeGetString(GetIpAddress)); 
                 yield return new EnvironmentEntry("LocalTime", Clock.FormatTimestamp(DateTime.Now));
 
                 var entryAssembly = Assembly.GetEntryAssembly();
@@ -36,13 +40,12 @@ namespace Metrics.Utils
             }
         }
 
-        /*private static string GetIpAddress()
+        private static string GetIpAddress()
         {
             string hostName = SafeGetString(Dns.GetHostName);
             try
             {
-                var ipAddress = Dns.GetHostEntry(hostName)
-                    .AddressList
+                var ipAddress = Dns.GetHostEntryAsync(hostName).Result.AddressList
                     .FirstOrDefault(ip => ip.AddressFamily == AddressFamily.InterNetwork);
 
                 if (ipAddress != null)
@@ -60,7 +63,7 @@ namespace Metrics.Utils
                 }
                 throw;
             }
-        }*/
+        }
 
         private static string SafeGetString(Func<string> action)
         {
